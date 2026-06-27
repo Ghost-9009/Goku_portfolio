@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="pic (2).png" href="favicon.ico">
+    <title>Calculator</title>
+    <style>
+        /* ─────────────── RESET & BASE ─────────────── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e2f;
+            user-select: none;
+        }
+
+        /* ─────────────── CALCULATOR SHELL ─────────────── */
+        .calculator {
+            width: 340px;
+            background: #2d2d44;
+            border-radius: 28px;
+            padding: 24px 20px 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.06);
+            transition: box-shadow 0.2s;
+        }
+
+        /* ─────────────── DISPLAY ─────────────── */
+        .display {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 22px;
+            text-align: right;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .display .expression {
+            color: #8a8aaa;
+            font-size: 1.1rem;
+            min-height: 1.6rem;
+            word-break: break-all;
+            line-height: 1.4;
+            transition: color 0.15s;
+        }
+
+        .display .result {
+            color: #f0f0ff;
+            font-size: 2.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            transition: font-size 0.15s;
+            word-break: break-all;
+        }
+
+        .display .result.shrink {
+            font-size: 2rem;
+        }
+
+        /* ─────────────── BUTTON GRID ─────────────── */
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        /* ─────────────── BUTTON STYLES ─────────────── */
+        .btn {
+            padding: 18px 0;
+            font-size: 1.5rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            background: #3a3a58;
+            color: #e8e8ff;
+            box-shadow: 0 6px 0 #1f1f32, 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.08s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            top: 0;
+        }
+
+        .btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 #1f1f32;
+        }
+
+        /* Number buttons */
+        .btn-number {
+            background: #3f3f60;
+            color: #f0f0ff;
+        }
+
+        .btn-number:hover {
+            background: #4a4a70;
+        }
+
+        /* Operator buttons */
+        .btn-operator {
+            background: #f5a623;
+            color: #1a1a2e;
+            box-shadow: 0 6px 0 #b87a1a, 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-operator:hover {
+            background: #ffb83d;
+        }
+
+        /* Function buttons (AC, %, ±) */
+        .btn-function {
+            background: #4a4a6a;
+            color: #c8c8ff;
+        }
+
+        .btn-function:hover {
+            background: #58587a;
+        }
+
+        /* Equals button */
+        .btn-equals {
+            background: #6c5ce7;
+            color: #fff;
+            box-shadow: 0 6px 0 #4834b5, 0 4px 10px rgba(0, 0, 0, 0.3);
+            grid-column: span 1;
+        }
+
+        .btn-equals:hover {
+            background: #7d6ff0;
+        }
+
+        /* Span 2 columns (zero button) */
+        .btn-zero {
+            grid-column: span 2;
+        }
+
+        /* ─────────────── KEYBOARD HINT (optional) ─────────────── */
+        .keyboard-hint {
+            margin-top: 14px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #5a5a7a;
+            letter-spacing: 0.5px;
+            opacity: 0.6;
+        }
+
+        /* ─────────────── RESPONSIVE ─────────────── */
+        @media (max-width: 400px) {
+            .calculator {
+                width: 94vw;
+                padding: 18px 14px 22px;
+                border-radius: 22px;
+            }
+
+            .btn {
+                padding: 16px 0;
+                font-size: 1.3rem;
+                border-radius: 14px;
+            }
+
+            .display .result {
+                font-size: 2.2rem;
+            }
+
+            .display .result.shrink {
+                font-size: 1.6rem;
+            }
+
+            .buttons {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator" role="application" aria-label="Calculator">
+
+        <!-- DISPLAY -->
+        <div class="display" aria-live="polite">
+            <div class="expression" id="expression"></div>
+            <div class="result" id="result">0</div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="buttons">
+
+            <!-- Row 1 -->
+            <button class="btn btn-function" data-value="AC">AC</button>
+            <button class="btn btn-function" data-value="±">±</button>
+            <button class="btn btn-function" data-value="%">%</button>
+            <button class="btn btn-operator" data-value="÷">÷</button>
+
+            <!-- Row 2 -->
+            <button class="btn btn-number" data-value="7">7</button>
+            <button class="btn btn-number" data-value="8">8</button>
+            <button class="btn btn-number" data-value="9">9</button>
+            <button class="btn btn-operator" data-value="×">×</button>
+
+            <!-- Row 3 -->
+            <button class="btn btn-number" data-value="4">4</button>
+            <button class="btn btn-number" data-value="5">5</button>
+            <button class="btn btn-number" data-value="6">6</button>
+            <button class="btn btn-operator" data-value="−">−</button>
+
+            <!-- Row 4 -->
+            <button class="btn btn-number" data-value="1">1</button>
+            <button class="btn btn-number" data-value="2">2</button>
+            <button class="btn btn-number" data-value="3">3</button>
+            <button class="btn btn-operator" data-value="+">+</button>
+
+            <!-- Row 5 -->
+            <button class="btn btn-number btn-zero" data-value="0">0</button>
+            <button class="btn btn-number" data-value=".">.</button>
+            <button class="btn btn-equals" data-value="=">=</button>
+
+        </div>
+
+        <div class="keyboard-hint">⌨️ keyboard supported</div>
+    </div>
+
+    <script>
+
+        console.log(alert("IF you want to download this calculator press ctrl+s for PC and for mobile click on the three dots and then click download logo. Enjoy the game"));
+
+        (function() {
+            'use strict';
+
+            // ─── DOM refs ───────────────────────────────────────────
+            const resultEl = document.getElementById('result');
+            const expressionEl = document.getElementById('expression');
+
+            // ─── State ──────────────────────────────────────────────
+            let currentInput = '0'; // what's shown on screen
+            let previousInput = ''; // previous operand
+            let operator = null; // current operator (string)
+            let shouldResetInput = false; // flag to start fresh after operator
+            let justEvaluated = false; // flag after pressing '='
+
+            // ─── Helpers ────────────────────────────────────────────
+
+            function updateDisplay() {
+                // Format the current input for display
+                let displayValue = currentInput;
+
+                // If it's a plain number with no decimal, limit length visually
+                if (displayValue.length > 14) {
+                    // Try to display in exponential notation if very long
+                    const num = parseFloat(displayValue);
+                    if (!isNaN(num) && isFinite(num)) {
+                        displayValue = num.toExponential(6);
+                    } else {
+                        displayValue = displayValue.slice(0, 14) + '…';
+                    }
+                }
+
+                resultEl.textContent = displayValue;
+
+                // Shrink text if it's long
+                if (displayValue.length > 10) {
+                    resultEl.classList.add('shrink');
+                } else {
+                    resultEl.classList.remove('shrink');
+                }
+
+                // Update expression preview
+                if (operator && !shouldResetInput && !justEvaluated) {
+                    expressionEl.textContent = `${previousInput} ${operator}`;
+                } else if (justEvaluated) {
+                    // keep expression as is (shows the full operation)
+                } else if (previousInput && operator && shouldResetInput) {
+                    expressionEl.textContent = `${previousInput} ${operator}`;
+                } else {
+                    expressionEl.textContent = '';
+                }
+            }
+
+            function resetCalculator() {
+                currentInput = '0';
+                previousInput = '';
+                operator = null;
+                shouldResetInput = false;
+                justEvaluated = false;
+                expressionEl.textContent = '';
+                updateDisplay();
+            }
+
+            function inputDigit(digit) {
+                if (justEvaluated) {
+                    // Start fresh after evaluation
+                    resetCalculator();
+                    // Then input the digit
+                }
+
+                if (shouldResetInput) {
+                    currentInput = '0';
+                    shouldResetInput = false;
+                }
+
+                // Limit input length to avoid overflow
+                if (currentInput.replace('-', '').replace('.', '').length >= 15) return;
+
+                if (digit === '.' && currentInput.includes('.')) return;
+
+                if (currentInput === '0' && digit !== '.') {
+                    currentInput = digit;
+                } else {
+                    currentInput += digit;
+                }
+
+                justEvaluated = false;
+                updateDisplay();
+            }
+
+            function handleOperator(op) {
+                if (justEvaluated) {
+                    // Continue from previous result
+                    previousInput = currentInput;
+                    operator = op;
+                    shouldResetInput = true;
+                    justEvaluated = false;
+                    updateDisplay();
+                    return;
+                }
+
+                const currentNum = parseFloat(currentInput);
+
+                if (operator && !shouldResetInput) {
+                    // Chain calculation
+                    const result = compute(parseFloat(previousInput), currentNum, operator);
+                    if (result === null || !isFinite(result)) {
+                        resetCalculator();
+                        resultEl.textContent = 'Error';
+                        return;
+                    }
+                    currentInput = String(result);
+                    previousInput = currentInput;
+                    operator = op;
+                    shouldResetInput = true;
+                    updateDisplay();
+                    return;
+                }
+
+                // First operator press
+                previousInput = currentInput;
+                operator = op;
+                shouldResetInput = true;
+                justEvaluated = false;
+                updateDisplay();
+            }
+
+            function compute(a, b, op) {
+                switch (op) {
+                    case '+':
+                        return a + b;
+                    case '−':
+                        return a - b;
+                    case '×':
+                        return a * b;
+                    case '÷':
+                        return b === 0 ? null : a / b;
+                    default:
+                        return null;
+                }
+            }
+
+            function evaluate() {
+                if (!operator || shouldResetInput) {
+                    // If no operator or nothing to evaluate, just show current
+                    justEvaluated = false;
+                    return;
+                }
+
+                const currentNum = parseFloat(currentInput);
+                if (isNaN(currentNum)) return;
+
+                const result = compute(parseFloat(previousInput), currentNum, operator);
+                if (result === null || !isFinite(result)) {
+                    resetCalculator();
+                    resultEl.textContent = 'Error';
+                    return;
+                }
+
+                // Build expression string for display
+                const expr = `${previousInput} ${operator} ${currentInput} =`;
+                expressionEl.textContent = expr;
+
+                currentInput = String(result);
+                previousInput = '';
+                operator = null;
+                shouldResetInput = true;
+                justEvaluated = true;
+                updateDisplay();
+            }
+
+            function toggleSign() {
+                if (currentInput === '0') return;
+                if (currentInput.startsWith('-')) {
+                    currentInput = currentInput.slice(1);
+                } else {
+                    currentInput = '-' + currentInput;
+                }
+                updateDisplay();
+            }
+
+            function percentage() {
+                const num = parseFloat(currentInput);
+                if (isNaN(num)) return;
+                const result = num / 100;
+                currentInput = String(result);
+                updateDisplay();
+            }
+
+            function handleBackspace() {
+                if (justEvaluated) {
+                    resetCalculator();
+                    return;
+                }
+                if (currentInput.length <= 1 || (currentInput.length === 2 && currentInput.startsWith('-'))) {
+                    currentInput = '0';
+                } else {
+                    currentInput = currentInput.slice(0, -1);
+                }
+                updateDisplay();
+            }
+
+            // ─── Button click handler ──────────────────────────────
+
+            function handleButtonClick(value) {
+                // Prevent accidental double triggers
+                if (value === undefined || value === null) return;
+
+                if (value >= '0' && value <= '9') {
+                    inputDigit(value);
+                } else if (value === '.') {
+                    inputDigit('.');
+                } else if (value === '+') {
+                    handleOperator('+');
+                } else if (value === '−') {
+                    handleOperator('−');
+                } else if (value === '×') {
+                    handleOperator('×');
+                } else if (value === '÷') {
+                    handleOperator('÷');
+                } else if (value === '=') {
+                    evaluate();
+                } else if (value === 'AC') {
+                    resetCalculator();
+                } else if (value === '±') {
+                    toggleSign();
+                } else if (value === '%') {
+                    percentage();
+                } else if (value === '⌫') {
+                    handleBackspace();
+                }
+            }
+
+            // ─── Attach event listeners to buttons ──────────────────
+
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const val = btn.getAttribute('data-value');
+                    handleButtonClick(val);
+                });
+
+                // Prevent context menu on long press (mobile)
+                btn.addEventListener('contextmenu', (e) => e.preventDefault());
+            });
+
+            // ─── Keyboard support ───────────────────────────────────
+
+            document.addEventListener('keydown', (e) => {
+                const key = e.key;
+
+                // Prevent default for calculator keys to avoid page scrolling etc.
+                const controlKeys = ['Enter', 'Backspace', 'Escape', 'Delete'];
+                if (controlKeys.includes(key) || /^[0-9.+\-*/%]$/.test(key)) {
+                    e.preventDefault();
+                }
+
+                // Digits & decimal
+                if (/^[0-9]$/.test(key)) {
+                    inputDigit(key);
+                    return;
+                }
+
+                if (key === '.') {
+                    inputDigit('.');
+                    return;
+                }
+
+                // Operators
+                if (key === '+') {
+                    handleOperator('+');
+                    return;
+                }
+                if (key === '-') {
+                    handleOperator('−');
+                    return;
+                }
+                if (key === '*') {
+                    handleOperator('×');
+                    return;
+                }
+                if (key === '/') {
+                    handleOperator('÷');
+                    return;
+                }
+
+                // Equals / Enter
+                if (key === '=' || key === 'Enter') {
+                    evaluate();
+                    return;
+                }
+
+                // Backspace
+                if (key === 'Backspace') {
+                    handleBackspace();
+                    return;
+                }
+
+                // Escape → AC
+                if (key === 'Escape' || key === 'Delete') {
+                    resetCalculator();
+                    return;
+                }
+
+                // Percentage
+                if (key === '%') {
+                    percentage();
+                    return;
+                }
+            });
+
+            // ─── Initial render ─────────────────────────────────────
+
+            updateDisplay();
+
+            // Expose for debugging (optional)
+            window.__calc = {
+                reset: resetCalculator,
+                state: () => ({
+                    currentInput,
+                    previousInput,
+                    operator,
+                    shouldResetInput,
+                    justEvaluated
+                })
+            };
+
+        })();
+    </script>
+
+</body>
+</html>
