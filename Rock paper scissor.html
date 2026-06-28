@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="pic (2).png" href="favicon.ico">
+    <title>RPS · Easy / Hard</title>
+    <style>
+        /* ─────────────── RESET & BASE ─────────────── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(145deg, #0b1120 0%, #1a253b 100%);
+            padding: 1.5rem;
+            margin: 0;
+        }
+
+        /* ─────────────── MAIN CARD ─────────────── */
+        .game-container {
+            max-width: 740px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 3.5rem;
+            padding: 2.5rem 2.2rem 2.8rem;
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            text-align: center;
+        }
+
+        /* ─────────────── HEADER ─────────────── */
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #f0e9d8, #ffd78c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.35rem;
+            text-shadow: 0 2px 20px rgba(255, 215, 140, 0.15);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 0.85rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        /* ─────────────── MODE SELECTOR ─────────────── */
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .mode-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.3);
+            padding: 0.45rem 1.8rem;
+            border-radius: 3rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .mode-btn.active {
+            background: rgba(255, 215, 140, 0.12);
+            border-color: rgba(255, 215, 140, 0.3);
+            color: #ffd78c;
+            box-shadow: 0 0 20px rgba(255, 215, 140, 0.05);
+        }
+
+        .mode-btn.active:hover {
+            background: rgba(255, 215, 140, 0.18);
+        }
+
+        /* ─────────────── SCOREBOARD ─────────────── */
+        .scoreboard {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2.5rem;
+            background: rgba(0, 0, 0, 0.30);
+            border-radius: 4rem;
+            padding: 0.8rem 2.2rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+        }
+
+        .score-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+            transition: all 0.2s ease;
+        }
+
+        .score-value.player-score {
+            color: #6ecbf5;
+        }
+        .score-value.computer-score {
+            color: #f78b8b;
+        }
+        .score-value.tie-score {
+            color: #b8b8b8;
+        }
+
+        .score-divider {
+            width: 1px;
+            height: 2.8rem;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* ─────────────── BATTLE ARENA ─────────────── */
+        .arena {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2.2rem;
+            padding: 0.5rem 0;
+        }
+
+        .fighter {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fighter .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        .choice-display {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 4.2rem;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            user-select: none;
+        }
+
+        .choice-display.player-choice {
+            border-color: rgba(110, 203, 245, 0.25);
+        }
+        .choice-display.computer-choice {
+            border-color: rgba(247, 139, 139, 0.25);
+        }
+
+        .choice-display.shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+            20% {
+                transform: rotate(-12deg) scale(0.95);
+            }
+            40% {
+                transform: rotate(12deg) scale(1.05);
+            }
+            60% {
+                transform: rotate(-8deg);
+            }
+            80% {
+                transform: rotate(8deg);
+            }
+        }
+
+        .choice-display.winner-glow {
+            animation: winGlow 0.6s ease 2;
+        }
+
+        @keyframes winGlow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(255, 215, 0, 0.5), 0 0 80px rgba(255, 215, 0, 0.15);
+            }
+        }
+
+        .choice-display .emoji {
+            line-height: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .vs-badge {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.12);
+            letter-spacing: 2px;
+            padding: 0 0.25rem;
+            flex-shrink: 0;
+        }
+
+        /* ─────────────── RESULT MESSAGE ─────────────── */
+        .result-message {
+            min-height: 3.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2.2rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #fff;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+
+        .result-message .highlight {
+            padding: 0.4rem 1.6rem;
+            border-radius: 3rem;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .result-message.win .highlight {
+            color: #6ecbf5;
+            border-color: rgba(110, 203, 245, 0.2);
+            background: rgba(110, 203, 245, 0.06);
+        }
+        .result-message.lose .highlight {
+            color: #f78b8b;
+            border-color: rgba(247, 139, 139, 0.2);
+            background: rgba(247, 139, 139, 0.06);
+        }
+        .result-message.tie .highlight {
+            color: #b8b8b8;
+            border-color: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        /* ─────────────── CHOICE BUTTONS ─────────────── */
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .choice-btn {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 3rem;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            color: #fff;
+            user-select: none;
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-6px) scale(1.04);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 14px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .choice-btn:active {
+            transform: scale(0.92);
+            transition-duration: 0.08s;
+        }
+
+        .choice-btn:focus-visible {
+            outline: 2px solid rgba(255, 215, 140, 0.5);
+            outline-offset: 4px;
+        }
+
+        .choice-btn .btn-label {
+            position: absolute;
+            bottom: -1.8rem;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.15);
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .choice-btn:hover .btn-label {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .choice-btn.rock:hover {
+            border-color: rgba(255, 180, 130, 0.3);
+            background: rgba(255, 180, 130, 0.06);
+        }
+        .choice-btn.paper:hover {
+            border-color: rgba(130, 200, 255, 0.3);
+            background: rgba(130, 200, 255, 0.06);
+        }
+        .choice-btn.scissors:hover {
+            border-color: rgba(255, 180, 220, 0.3);
+            background: rgba(255, 180, 220, 0.06);
+        }
+
+        /* ─────────────── RESET & MODE WRAPPER ─────────────── */
+        .bottom-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.8rem;
+            margin-top: 2.8rem;
+            flex-wrap: wrap;
+        }
+
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.25);
+            padding: 0.6rem 2rem;
+            border-radius: 3rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* ─────────────── RESPONSIVE ─────────────── */
+        @media (max-width: 580px) {
+            .game-container {
+                padding: 1.8rem 1.2rem 2rem;
+                border-radius: 2.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .scoreboard {
+                gap: 1.2rem;
+                padding: 0.6rem 1.2rem;
+            }
+            .score-value {
+                font-size: 1.6rem;
+            }
+            .score-divider {
+                height: 2rem;
+            }
+
+            .choice-display {
+                width: 88px;
+                height: 88px;
+                font-size: 3rem;
+            }
+
+            .vs-badge {
+                font-size: 0.7rem;
+            }
+
+            .choice-btn {
+                width: 72px;
+                height: 72px;
+                font-size: 2.4rem;
+            }
+
+            .result-message {
+                font-size: 1rem;
+                min-height: 2.6rem;
+            }
+            .result-message .highlight {
+                padding: 0.3rem 1.2rem;
+            }
+
+            .arena {
+                gap: 0.5rem;
+            }
+
+            .mode-btn {
+                padding: 0.35rem 1.2rem;
+                font-size: 0.65rem;
+            }
+            .bottom-actions {
+                gap: 1rem;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .choice-display {
+                width: 72px;
+                height: 72px;
+                font-size: 2.4rem;
+            }
+            .choice-btn {
+                width: 62px;
+                height: 62px;
+                font-size: 2rem;
+            }
+            .choices {
+                gap: 0.8rem;
+            }
+            .scoreboard {
+                gap: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+            .score-value {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <!-- HEADER -->
+        <h1>✧ RPS ✧</h1>
+        <p class="subtitle">Choose your weapon</p>
+
+        <!-- MODE SELECTOR -->
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="easy" id="modeEasy">♡ Easy</button>
+            <button class="mode-btn" data-mode="hard" id="modeHard">⚡ Hard</button>
+        </div>
+
+        <!-- SCOREBOARD -->
+        <div class="scoreboard">
+            <div class="score-item">
+                <span class="score-label">You</span>
+                <span class="score-value player-score" id="playerScore">0</span>
+            </div>
+            <div class="score-divider"></div>
+            <div class="score-item">
+                <span class="score-label">Ties</span>
+                <span class="score-value tie-score" id="tieScore">0</span>
+            </div>
+            <div class="score-divider"></div>
+            <div class="score-item">
+                <span class="score-label">CPU</span>
+                <span class="score-value computer-score" id="computerScore">0</span>
+            </div>
+        </div>
+
+        <!-- ARENA -->
+        <div class="arena">
+            <div class="fighter">
+                <span class="label">You</span>
+                <div class="choice-display player-choice" id="playerChoiceDisplay">
+                    <span class="emoji">🤚</span>
+                </div>
+            </div>
+
+            <div class="vs-badge">VS</div>
+
+            <div class="fighter">
+                <span class="label">CPU</span>
+                <div class="choice-display computer-choice" id="computerChoiceDisplay">
+                    <span class="emoji">🤚</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULT -->
+        <div class="result-message" id="resultMessage">
+            <span class="highlight">Pick a move</span>
+        </div>
+
+        <!-- CHOICE BUTTONS -->
+        <div class="choices">
+            <button class="choice-btn rock" data-choice="rock" aria-label="Rock">
+                ✊
+                <span class="btn-label">Rock</span>
+            </button>
+            <button class="choice-btn paper" data-choice="paper" aria-label="Paper">
+                ✋
+                <span class="btn-label">Paper</span>
+            </button>
+            <button class="choice-btn scissors" data-choice="scissors" aria-label="Scissors">
+                ✌️
+                <span class="btn-label">Scissors</span>
+            </button>
+        </div>
+
+        <!-- BOTTOM ACTIONS: RESET + MODE (already above) -->
+        <div class="bottom-actions">
+            <button class="reset-btn" id="resetBtn">↻ New Game</button>
+        </div>
+    </div>
+
+    <script>
+
+        console.log(alert("IF you want to download this game press ctrl+s for PC and for mobile click on the three dots and then click download logo. Enjoy the game"));
+
+        (function() {
+            'use strict';
+
+            // ─── DOM refs ──────────────────────────────────────────
+            const playerScoreEl = document.getElementById('playerScore');
+            const computerScoreEl = document.getElementById('computerScore');
+            const tieScoreEl = document.getElementById('tieScore');
+            const playerDisplay = document.getElementById('playerChoiceDisplay');
+            const computerDisplay = document.getElementById('computerChoiceDisplay');
+            const resultMsg = document.getElementById('resultMessage');
+            const choiceBtns = document.querySelectorAll('.choice-btn');
+            const resetBtn = document.getElementById('resetBtn');
+            const modeEasy = document.getElementById('modeEasy');
+            const modeHard = document.getElementById('modeHard');
+
+            // ─── State ─────────────────────────────────────────────
+            const state = {
+                playerScore: 0,
+                computerScore: 0,
+                tieScore: 0,
+                isPlaying: false,
+                difficulty: 'easy', // 'easy' or 'hard'
+                lastPlayerMove: null, // for hard mode
+            };
+
+            // ─── Helpers ───────────────────────────────────────────
+            function getRandomChoice() {
+                const choices = ['rock', 'paper', 'scissors'];
+                return choices[Math.floor(Math.random() * choices.length)];
+            }
+
+            function getCounterMove(move) {
+                if (move === 'rock') return 'paper';
+                if (move === 'paper') return 'scissors';
+                if (move === 'scissors') return 'rock';
+                return getRandomChoice();
+            }
+
+            function getEmoji(choice) {
+                switch (choice) {
+                    case 'rock':
+                        return '✊';
+                    case 'paper':
+                        return '✋';
+                    case 'scissors':
+                        return '✌️';
+                    default:
+                        return '🤚';
+                }
+            }
+
+            function getChoiceLabel(choice) {
+                return choice.charAt(0).toUpperCase() + choice.slice(1);
+            }
+
+            // ─── Determine winner ──────────────────────────────────
+            function getWinner(player, computer) {
+                if (player === computer) return 'tie';
+                if (
+                    (player === 'rock' && computer === 'scissors') ||
+                    (player === 'paper' && computer === 'rock') ||
+                    (player === 'scissors' && computer === 'paper')
+                ) {
+                    return 'player';
+                }
+                return 'computer';
+            }
+
+            // ─── Update UI ─────────────────────────────────────────
+            function updateScoreUI() {
+                playerScoreEl.textContent = state.playerScore;
+                computerScoreEl.textContent = state.computerScore;
+                tieScoreEl.textContent = state.tieScore;
+            }
+
+            function setDisplay(el, choice) {
+                const emojiSpan = el.querySelector('.emoji');
+                if (emojiSpan) {
+                    emojiSpan.textContent = choice ? getEmoji(choice) : '🤚';
+                }
+            }
+
+            function setResultMessage(text, type) {
+                const highlight = resultMsg.querySelector('.highlight');
+                if (highlight) {
+                    highlight.textContent = text;
+                }
+                // Reset classes
+                resultMsg.classList.remove('win', 'lose', 'tie');
+                if (type) {
+                    resultMsg.classList.add(type);
+                }
+            }
+
+            function clearGlow() {
+                playerDisplay.classList.remove('winner-glow');
+                computerDisplay.classList.remove('winner-glow');
+            }
+
+            function shakeDisplays() {
+                playerDisplay.classList.remove('shake');
+                computerDisplay.classList.remove('shake');
+                // Force reflow
+                void playerDisplay.offsetWidth;
+                void computerDisplay.offsetWidth;
+                playerDisplay.classList.add('shake');
+                computerDisplay.classList.add('shake');
+                // Remove after animation
+                setTimeout(() => {
+                    playerDisplay.classList.remove('shake');
+                    computerDisplay.classList.remove('shake');
+                }, 550);
+            }
+
+            // ─── Computer choice logic ─────────────────────────────
+            function getComputerChoice() {
+                if (state.difficulty === 'easy') {
+                    return getRandomChoice();
+                } else { // hard
+                    // If we have a last player move, counter it, otherwise random
+                    if (state.lastPlayerMove) {
+                        return getCounterMove(state.lastPlayerMove);
+                    }
+                    return getRandomChoice();
+                }
+            }
+
+            // ─── Play round ────────────────────────────────────────
+            function playRound(playerChoice) {
+                if (state.isPlaying) return;
+                state.isPlaying = true;
+
+                // Disable buttons during animation
+                choiceBtns.forEach(btn => btn.disabled = true);
+
+                // Clear previous glow
+                clearGlow();
+
+                // Show player's choice immediately
+                setDisplay(playerDisplay, playerChoice);
+
+                // Shake animation
+                shakeDisplays();
+
+                // Computer picks based on difficulty
+                const computerChoice = getComputerChoice();
+
+                // Update computer display after delay
+                setTimeout(() => {
+                    setDisplay(computerDisplay, computerChoice);
+
+                    // Determine winner
+                    const winner = getWinner(playerChoice, computerChoice);
+
+                    // Update score
+                    let resultText = '';
+                    let resultType = '';
+
+                    if (winner === 'player') {
+                        state.playerScore += 1;
+                        resultText = `🎉 You win! ${getChoiceLabel(playerChoice)} beats ${getChoiceLabel(computerChoice)}`;
+                        resultType = 'win';
+                        playerDisplay.classList.add('winner-glow');
+                    } else if (winner === 'computer') {
+                        state.computerScore += 1;
+                        resultText = `😵 You lose! ${getChoiceLabel(computerChoice)} beats ${getChoiceLabel(playerChoice)}`;
+                        resultType = 'lose';
+                        computerDisplay.classList.add('winner-glow');
+                    } else {
+                        state.tieScore += 1;
+                        resultText = `⚖️ Tie! Both chose ${getChoiceLabel(playerChoice)}`;
+                        resultType = 'tie';
+                    }
+
+                    // Store last player move for hard mode
+                    state.lastPlayerMove = playerChoice;
+
+                    updateScoreUI();
+                    setResultMessage(resultText, resultType);
+
+                    // Re-enable buttons
+                    choiceBtns.forEach(btn => btn.disabled = false);
+                    state.isPlaying = false;
+
+                }, 550);
+            }
+
+            // ─── Reset ─────────────────────────────────────────────
+            function resetGame() {
+                if (state.isPlaying) return;
+
+                state.playerScore = 0;
+                state.computerScore = 0;
+                state.tieScore = 0;
+                state.lastPlayerMove = null;
+                updateScoreUI();
+
+                setDisplay(playerDisplay, null);
+                setDisplay(computerDisplay, null);
+                setResultMessage('Pick a move', null);
+                clearGlow();
+
+                choiceBtns.forEach(btn => btn.disabled = false);
+                state.isPlaying = false;
+            }
+
+            // ─── Mode switching ────────────────────────────────────
+            function setMode(mode) {
+                if (mode === state.difficulty) return;
+                state.difficulty = mode;
+                // Update active class
+                modeEasy.classList.toggle('active', mode === 'easy');
+                modeHard.classList.toggle('active', mode === 'hard');
+                // Reset last player move so hard mode doesn't use stale data
+                state.lastPlayerMove = null;
+                // Optionally reset game? We can keep scores, but reset last move.
+                // We'll just clear last move and keep scores.
+                // Optionally we can reset scores? I'd keep scores to allow switching mid-game.
+                // But we also need to clear the displays? No, we keep them as is.
+                // However, to avoid confusion, we can keep them.
+                // We'll set a small message in result?
+                setResultMessage(`Mode: ${mode.charAt(0).toUpperCase() + mode.slice(1)}`, null);
+            }
+
+            // ─── Event listeners ───────────────────────────────────
+            choiceBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const choice = this.dataset.choice;
+                    if (choice && !state.isPlaying) {
+                        playRound(choice);
+                    }
+                });
+            });
+
+            resetBtn.addEventListener('click', resetGame);
+
+            modeEasy.addEventListener('click', function() {
+                setMode('easy');
+            });
+            modeHard.addEventListener('click', function() {
+                setMode('hard');
+            });
+
+            // ─── Keyboard support ──────────────────────────────────
+            document.addEventListener('keydown', (e) => {
+                const key = e.key.toLowerCase();
+                if (key === 'r' || key === '1') {
+                    document.querySelector('.choice-btn.rock')?.click();
+                } else if (key === 'p' || key === '2') {
+                    document.querySelector('.choice-btn.paper')?.click();
+                } else if (key === 's' || key === '3') {
+                    document.querySelector('.choice-btn.scissors')?.click();
+                } else if (key === ' ') {
+                    e.preventDefault();
+                    resetBtn.click();
+                } else if (key === 'e') {
+                    modeEasy.click();
+                } else if (key === 'h') {
+                    modeHard.click();
+                }
+            });
+
+            // ─── Init ──────────────────────────────────────────────
+            // Set initial mode
+            setMode('easy'); // ensures active class and state
+            // Neutral display
+            setDisplay(playerDisplay, null);
+            setDisplay(computerDisplay, null);
+            updateScoreUI();
+            setResultMessage('Pick a move', null);
+
+        })();
+    </script>
+
+</body>
+</html>

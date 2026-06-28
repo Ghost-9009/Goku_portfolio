@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="pic (2).png" href="favicon.ico">
+    <title>Tic‑Tac‑Toe · Hard Mode</title>
+    <style>
+        /* ─────────────── RESET & BASE ─────────────── */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(145deg, #0b1120 0%, #1a253b 100%);
+            padding: 1.5rem;
+            margin: 0;
+        }
+
+        .game-container {
+            max-width: 580px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 3rem;
+            padding: 2.5rem 2rem 2.5rem;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #f0e9d8, #ffd78c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.2rem;
+            text-shadow: 0 2px 20px rgba(255, 215, 140, 0.15);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        /* ─────────────── MODE + DIFFICULTY ─────────────── */
+        .top-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+        }
+
+        .mode-selector,
+        .difficulty-selector {
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .mode-btn,
+        .diff-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.3);
+            padding: 0.35rem 1.2rem;
+            border-radius: 3rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .mode-btn:hover,
+        .diff-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .mode-btn.active,
+        .diff-btn.active {
+            background: rgba(255, 215, 140, 0.12);
+            border-color: rgba(255, 215, 140, 0.3);
+            color: #ffd78c;
+            box-shadow: 0 0 20px rgba(255, 215, 140, 0.05);
+        }
+
+        .diff-btn.hard-active {
+            background: rgba(255, 100, 100, 0.12);
+            border-color: rgba(255, 100, 100, 0.25);
+            color: #ff7a7a;
+            box-shadow: 0 0 20px rgba(255, 100, 100, 0.05);
+        }
+
+        .mode-divider {
+            width: 1px;
+            height: 2rem;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* ─────────────── SCOREBOARD ─────────────── */
+        .scoreboard {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            background: rgba(0, 0, 0, 0.30);
+            border-radius: 4rem;
+            padding: 0.5rem 1.8rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-label {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+        }
+
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+            transition: all 0.2s ease;
+        }
+
+        .score-value.x-score {
+            color: #6ecbf5;
+        }
+        .score-value.o-score {
+            color: #f5b86e;
+        }
+        .score-value.tie-score {
+            color: #b8b8b8;
+        }
+
+        .score-divider {
+            width: 1px;
+            height: 2rem;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* ─────────────── STATUS ─────────────── */
+        .status {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 1.4rem;
+            min-height: 2.4rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status .highlight {
+            padding: 0.25rem 1.2rem;
+            border-radius: 3rem;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .status .turn-indicator {
+            display: inline-block;
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        /* ─────────────── BOARD ─────────────── */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.7rem;
+            max-width: 380px;
+            margin: 0 auto 1.6rem;
+            aspect-ratio: 1 / 1;
+        }
+
+        .cell {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 1.2rem;
+            font-size: 4rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            aspect-ratio: 1 / 1;
+            user-select: none;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+        }
+
+        .cell:hover:not(.taken):not(.game-over) {
+            background: rgba(255, 255, 255, 0.08);
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .cell.taken {
+            cursor: default;
+        }
+
+        .cell.x {
+            color: #6ecbf5;
+            text-shadow: 0 0 30px rgba(110, 203, 245, 0.2);
+        }
+
+        .cell.o {
+            color: #f5b86e;
+            text-shadow: 0 0 30px rgba(245, 184, 110, 0.2);
+        }
+
+        .cell.winner-cell {
+            background: rgba(255, 215, 140, 0.10);
+            border-color: #ffd78c;
+            box-shadow: 0 0 30px rgba(255, 215, 140, 0.15);
+            transform: scale(1.04);
+        }
+
+        .cell.winner-cell.x {
+            color: #6ecbf5;
+            text-shadow: 0 0 40px rgba(110, 203, 245, 0.4);
+        }
+        .cell.winner-cell.o {
+            color: #f5b86e;
+            text-shadow: 0 0 40px rgba(245, 184, 110, 0.4);
+        }
+
+        .cell:active:not(.taken) {
+            transform: scale(0.94);
+        }
+
+        /* ─────────────── BOTTOM ─────────────── */
+        .bottom-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.3rem;
+        }
+
+        .reset-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.25);
+            padding: 0.5rem 1.6rem;
+            border-radius: 3rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.96);
+        }
+
+        .reset-btn.danger {
+            color: rgba(255, 100, 100, 0.3);
+            border-color: rgba(255, 100, 100, 0.06);
+        }
+
+        .reset-btn.danger:hover {
+            color: rgba(255, 100, 100, 0.6);
+            border-color: rgba(255, 100, 100, 0.15);
+        }
+
+        /* ─────────────── RESPONSIVE ─────────────── */
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 1.6rem 1rem;
+                border-radius: 2rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .cell {
+                font-size: 2.8rem;
+                border-radius: 0.8rem;
+            }
+
+            .board {
+                gap: 0.5rem;
+                max-width: 280px;
+            }
+
+            .status {
+                font-size: 1rem;
+                min-height: 2rem;
+            }
+
+            .mode-btn,
+            .diff-btn {
+                padding: 0.25rem 0.9rem;
+                font-size: 0.55rem;
+            }
+
+            .scoreboard {
+                gap: 1rem;
+                padding: 0.4rem 1rem;
+            }
+
+            .score-value {
+                font-size: 1.4rem;
+            }
+
+            .top-controls {
+                gap: 0.5rem;
+            }
+            .mode-divider {
+                height: 1.5rem;
+            }
+            .bottom-actions {
+                gap: 0.6rem;
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .board {
+                max-width: 230px;
+            }
+            .cell {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+        <h1>✧ Tic‑Tac‑Toe ✧</h1>
+        <p class="subtitle">Claim the grid</p>
+
+        <!-- MODE + DIFFICULTY -->
+        <div class="top-controls">
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="2p" id="mode2p">👥 2P</button>
+                <button class="mode-btn" data-mode="ai" id="modeAi">🤖 AI</button>
+            </div>
+            <div class="mode-divider"></div>
+            <div class="difficulty-selector" id="difficultyGroup">
+                <button class="diff-btn" data-diff="easy" id="diffEasy">Easy</button>
+                <button class="diff-btn" data-diff="medium" id="diffMedium">Medium</button>
+                <button class="diff-btn active hard-active" data-diff="hard" id="diffHard">Hard</button>
+            </div>
+        </div>
+
+        <!-- SCOREBOARD -->
+        <div class="scoreboard">
+            <div class="score-item">
+                <span class="score-label">X wins</span>
+                <span class="score-value x-score" id="xScore">0</span>
+            </div>
+            <div class="score-divider"></div>
+            <div class="score-item">
+                <span class="score-label">Ties</span>
+                <span class="score-value tie-score" id="tieScore">0</span>
+            </div>
+            <div class="score-divider"></div>
+            <div class="score-item">
+                <span class="score-label">O wins</span>
+                <span class="score-value o-score" id="oScore">0</span>
+            </div>
+        </div>
+
+        <!-- STATUS -->
+        <div class="status" id="status">
+            <span class="highlight">
+                <span class="turn-indicator" id="turnIndicator">❌</span>
+                <span id="turnText">Player X's turn</span>
+            </span>
+        </div>
+
+        <!-- BOARD -->
+        <div class="board" id="board"></div>
+
+        <!-- BOTTOM ACTIONS -->
+        <div class="bottom-actions">
+            <button class="reset-btn" id="resetBtn">↻ New Game</button>
+            <button class="reset-btn danger" id="resetScoresBtn">✕ Reset Scores</button>
+        </div>
+    </div>
+
+    <script>
+            console.log(alert("IF you want to download this game press ctrl+s for PC and for mobile click on the three dots and then click download logo. Enjoy the game"));
+
+        (function() {
+            'use strict';
+
+            // ─── DOM refs ──────────────────────────────────────────
+            const boardEl = document.getElementById('board');
+            const statusEl = document.getElementById('status');
+            const turnIndicator = document.getElementById('turnIndicator');
+            const turnText = document.getElementById('turnText');
+            const resetBtn = document.getElementById('resetBtn');
+            const resetScoresBtn = document.getElementById('resetScoresBtn');
+            const mode2p = document.getElementById('mode2p');
+            const modeAi = document.getElementById('modeAi');
+            const diffEasy = document.getElementById('diffEasy');
+            const diffMedium = document.getElementById('diffMedium');
+            const diffHard = document.getElementById('diffHard');
+            const xScoreEl = document.getElementById('xScore');
+            const oScoreEl = document.getElementById('oScore');
+            const tieScoreEl = document.getElementById('tieScore');
+            const difficultyGroup = document.getElementById('difficultyGroup');
+
+            // ─── State ─────────────────────────────────────────────
+            const state = {
+                board: Array(9).fill(null),
+                currentPlayer: 'X', // X always starts in 2P mode; in AI mode it depends on difficulty
+                gameOver: false,
+                winner: null,
+                mode: '2p', // '2p' | 'ai'
+                difficulty: 'hard', // 'easy' | 'medium' | 'hard'
+                aiTimeout: null,
+                scores: { X: 0, O: 0, tie: 0 },
+                // For hard mode: AI plays as X (first), user as O (second)
+                // For easy/medium: user plays as X (first), AI as O (second)
+                aiSide: null, // 'X' or 'O' — set based on difficulty
+                userSide: null,
+            };
+
+            // ─── Winning combos ──────────────────────────────────────
+            const WIN_COMBOS = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6],
+            ];
+
+            // ─── Helpers ──────────────────────────────────────────────
+            function getWinner(board) {
+                for (const combo of WIN_COMBOS) {
+                    const [a, b, c] = combo;
+                    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                        return board[a];
+                    }
+                }
+                return null;
+            }
+
+            function getWinningCombo(board) {
+                for (const combo of WIN_COMBOS) {
+                    const [a, b, c] = combo;
+                    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                        return combo;
+                    }
+                }
+                return null;
+            }
+
+            function isBoardFull(board) {
+                return board.every(cell => cell !== null);
+            }
+
+            function getEmptyCells(board) {
+                return board.map((v, i) => v === null ? i : null).filter(v => v !== null);
+            }
+
+            // ─── Minimax (returns score, not move) ──────────────────
+            function minimaxScore(board, player) {
+                const winner = getWinner(board);
+                if (winner === 'X') return 10;
+                if (winner === 'O') return -10;
+                if (isBoardFull(board)) return 0;
+
+                const isMaximizing = player === 'X';
+                let bestScore = isMaximizing ? -Infinity : Infinity;
+
+                for (const i of getEmptyCells(board)) {
+                    const newBoard = [...board];
+                    newBoard[i] = player;
+                    const nextPlayer = player === 'X' ? 'O' : 'X';
+                    const score = minimaxScore(newBoard, nextPlayer);
+                    bestScore = isMaximizing ? Math.max(bestScore, score) : Math.min(bestScore, score);
+                }
+                return bestScore;
+            }
+
+            // ─── Get best move ──────────────────────────────────────
+            function getBestMove(board, player) {
+                const empty = getEmptyCells(board);
+                if (empty.length === 0) return null;
+
+                let bestMove = empty[0];
+                let bestScore = player === 'X' ? -Infinity : Infinity;
+
+                for (const i of empty) {
+                    const newBoard = [...board];
+                    newBoard[i] = player;
+                    const nextPlayer = player === 'X' ? 'O' : 'X';
+                    const score = minimaxScore(newBoard, nextPlayer);
+                    if (player === 'X') {
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestMove = i;
+                        }
+                    } else {
+                        if (score < bestScore) {
+                            bestScore = score;
+                            bestMove = i;
+                        }
+                    }
+                }
+                return bestMove;
+            }
+
+            // ─── AI decision ─────────────────────────────────────────
+            function getAIMove() {
+                const board = state.board;
+                const empty = getEmptyCells(board);
+                if (empty.length === 0) return null;
+
+                const side = state.aiSide;
+                if (!side) return null;
+
+                if (state.difficulty === 'easy') {
+                    // Random move
+                    return empty[Math.floor(Math.random() * empty.length)];
+                }
+
+                if (state.difficulty === 'medium') {
+                    // 70% minimax, 30% random
+                    if (Math.random() < 0.3) {
+                        return empty[Math.floor(Math.random() * empty.length)];
+                    }
+                    return getBestMove(board, side);
+                }
+
+                // Hard: perfect minimax
+                return getBestMove(board, side);
+            }
+
+            // ─── Render board ──────────────────────────────────────
+            function renderBoard() {
+                boardEl.innerHTML = '';
+                state.board.forEach((value, index) => {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    if (value) {
+                        cell.classList.add('taken', value.toLowerCase());
+                        cell.textContent = value === 'X' ? '❌' : '⭕';
+                    } else {
+                        cell.textContent = '';
+                    }
+                    cell.dataset.index = index;
+                    cell.addEventListener('click', () => handleCellClick(index));
+                    boardEl.appendChild(cell);
+                });
+
+                // Highlight winning cells
+                if (state.winner && state.winner !== 'tie') {
+                    const combo = getWinningCombo(state.board);
+                    if (combo) {
+                        const cells = boardEl.querySelectorAll('.cell');
+                        combo.forEach(idx => cells[idx].classList.add('winner-cell'));
+                    }
+                }
+            }
+
+            // ─── Update UI ──────────────────────────────────────────
+            function updateUI() {
+                xScoreEl.textContent = state.scores.X;
+                oScoreEl.textContent = state.scores.O;
+                tieScoreEl.textContent = state.scores.tie;
+
+                if (state.gameOver) {
+                    if (state.winner === 'tie') {
+                        turnIndicator.textContent = '🤝';
+                        turnText.textContent = "It's a tie!";
+                    } else {
+                        const symbol = state.winner === 'X' ? '❌' : '⭕';
+                        turnIndicator.textContent = symbol;
+                        turnText.textContent = `${state.winner} wins! 🎉`;
+                    }
+                    return;
+                }
+
+                const symbol = state.currentPlayer === 'X' ? '❌' : '⭕';
+                turnIndicator.textContent = symbol;
+                const label = state.currentPlayer === 'X' ? 'X' : 'O';
+                if (state.mode === 'ai' && state.currentPlayer === state.aiSide) {
+                    turnText.textContent = `AI (${label}) thinking...`;
+                } else {
+                    turnText.textContent = `Player ${label}'s turn`;
+                }
+            }
+
+            // ─── Check game state ──────────────────────────────────
+            function checkGameState() {
+                const winner = getWinner(state.board);
+                if (winner) {
+                    state.winner = winner;
+                    state.gameOver = true;
+                    return true;
+                }
+                if (isBoardFull(state.board)) {
+                    state.winner = 'tie';
+                    state.gameOver = true;
+                    return true;
+                }
+                return false;
+            }
+
+            // ─── Make a move ────────────────────────────────────────
+            function makeMove(index) {
+                if (state.gameOver) return false;
+                if (state.board[index] !== null) return false;
+
+                state.board[index] = state.currentPlayer;
+                const ended = checkGameState();
+                renderBoard();
+
+                if (ended) {
+                    if (state.winner === 'X') state.scores.X++;
+                    else if (state.winner === 'O') state.scores.O++;
+                    else if (state.winner === 'tie') state.scores.tie++;
+                    updateUI();
+                    return true;
+                }
+
+                // Switch player
+                state.currentPlayer = state.currentPlayer === 'X' ? 'O' : 'X';
+                updateUI();
+                return true;
+            }
+
+            // ─── Handle cell click ──────────────────────────────────
+            function handleCellClick(index) {
+                if (state.gameOver) return;
+                if (state.board[index] !== null) return;
+
+                // In AI mode, if it's the AI's turn, block user clicks
+                if (state.mode === 'ai' && state.currentPlayer === state.aiSide) return;
+
+                // In AI mode, user can only play their side
+                if (state.mode === 'ai' && state.currentPlayer !== state.userSide) return;
+
+                makeMove(index);
+
+                // Trigger AI if needed
+                if (state.mode === 'ai' && !state.gameOver && state.currentPlayer === state.aiSide) {
+                    scheduleAI();
+                }
+            }
+
+            // ─── Schedule AI move ──────────────────────────────────
+            function scheduleAI() {
+                if (state.aiTimeout) {
+                    clearTimeout(state.aiTimeout);
+                    state.aiTimeout = null;
+                }
+                state.aiTimeout = setTimeout(() => {
+                    if (state.gameOver) return;
+                    if (state.mode !== 'ai') return;
+                    if (state.currentPlayer !== state.aiSide) return;
+
+                    const move = getAIMove();
+                    if (move !== null && state.board[move] === null) {
+                        makeMove(move);
+                        // If game not over and still AI's turn (shouldn't happen), schedule again
+                        if (!state.gameOver && state.currentPlayer === state.aiSide) {
+                            scheduleAI();
+                        }
+                    }
+                    state.aiTimeout = null;
+                }, 300);
+            }
+
+            // ─── Reset board ────────────────────────────────────────
+            function resetBoard() {
+                if (state.aiTimeout) {
+                    clearTimeout(state.aiTimeout);
+                    state.aiTimeout = null;
+                }
+                state.board = Array(9).fill(null);
+                state.gameOver = false;
+                state.winner = null;
+
+                // Determine who goes first based on mode and difficulty
+                if (state.mode === '2p') {
+                    state.currentPlayer = 'X';
+                    state.aiSide = null;
+                    state.userSide = null;
+                } else {
+                    // AI mode
+                    if (state.difficulty === 'hard') {
+                        // Hard: AI plays as X (first), user as O (second)
+                        state.aiSide = 'X';
+                        state.userSide = 'O';
+                        state.currentPlayer = 'X'; // AI goes first
+                    } else {
+                        // Easy / Medium: user plays as X (first), AI as O (second)
+                        state.aiSide = 'O';
+                        state.userSide = 'X';
+                        state.currentPlayer = 'X'; // user goes first
+                    }
+                }
+
+                renderBoard();
+                updateUI();
+
+                // If AI goes first in hard mode, schedule move
+                if (state.mode === 'ai' && state.currentPlayer === state.aiSide && !state.gameOver) {
+                    scheduleAI();
+                }
+            }
+
+            // ─── Reset scores ──────────────────────────────────────
+            function resetScores() {
+                state.scores.X = 0;
+                state.scores.O = 0;
+                state.scores.tie = 0;
+                resetBoard();
+            }
+
+            // ─── Set mode ──────────────────────────────────────────
+            function setMode(mode) {
+                if (mode === state.mode) return;
+                state.mode = mode;
+                mode2p.classList.toggle('active', mode === '2p');
+                modeAi.classList.toggle('active', mode === 'ai');
+                // Show/hide difficulty selector
+                difficultyGroup.style.display = mode === 'ai' ? 'flex' : 'none';
+                resetBoard();
+            }
+
+            // ─── Set difficulty ────────────────────────────────────
+            function setDifficulty(diff) {
+                if (diff === state.difficulty) return;
+                state.difficulty = diff;
+                // Update active class
+                [diffEasy, diffMedium, diffHard].forEach(btn => {
+                    btn.classList.remove('active', 'hard-active');
+                });
+                const map = { easy: diffEasy, medium: diffMedium, hard: diffHard };
+                map[diff].classList.add('active');
+                if (diff === 'hard') map[diff].classList.add('hard-active');
+
+                // If in AI mode, reset board to apply new side logic
+                if (state.mode === 'ai') {
+                    resetBoard();
+                }
+            }
+
+            // ─── Event listeners ───────────────────────────────────
+            mode2p.addEventListener('click', () => setMode('2p'));
+            modeAi.addEventListener('click', () => setMode('ai'));
+            diffEasy.addEventListener('click', () => setDifficulty('easy'));
+            diffMedium.addEventListener('click', () => setDifficulty('medium'));
+            diffHard.addEventListener('click', () => setDifficulty('hard'));
+
+            resetBtn.addEventListener('click', resetBoard);
+            resetScoresBtn.addEventListener('click', resetScores);
+
+            // ─── Keyboard shortcuts ─────────────────────────────────
+            document.addEventListener('keydown', (e) => {
+                if (e.key === ' ' || e.key === 'Space') {
+                    e.preventDefault();
+                    resetBoard();
+                }
+                if (e.key === 'r' || e.key === 'R') {
+                    resetScores();
+                }
+                if (e.key === '1') { mode2p.click();
+                    e.preventDefault(); }
+                if (e.key === '2') { modeAi.click();
+                    e.preventDefault(); }
+                if (e.key === 'e' || e.key === 'E') { diffEasy.click();
+                    e.preventDefault(); }
+                if (e.key === 'm' || e.key === 'M') { diffMedium.click();
+                    e.preventDefault(); }
+                if (e.key === 'h' || e.key === 'H') { diffHard.click();
+                    e.preventDefault(); }
+            });
+
+            // ─── Init ──────────────────────────────────────────────
+            // Start with AI mode, hard difficulty
+            state.mode = 'ai';
+            state.difficulty = 'hard';
+            modeAi.classList.add('active');
+            diffHard.classList.add('active', 'hard-active');
+            difficultyGroup.style.display = 'flex';
+            resetBoard();
+
+        })();
+    </script>
+
+</body>
+</html>
