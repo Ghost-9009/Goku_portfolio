@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookVerse · Professional Bookstore</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=s
+p" rel="stylesheet" />
+  <style>
+    /* ---------- RESET & BASE ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #faf6f0;
+      color: #2c2c2c;
+      line-height: 1.6;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    ul {
+      list-style: none;
+    }
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ---------- HEADER / NAV ---------- */
+    header {
+      background: #1e1e2a;
+      color: #fff;
+      padding: 14px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .logo span {
+      color: #d4af37;
+    }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    .nav-links a {
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .nav-links a:hover {
+      color: #d4af37;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+    .cart-count {
+      position: absolute;
+      top: -10px;
+      right: -12px;
+      background: #d4af37;
+      color: #1e1e2a;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-radius: 50%;
+      padding: 2px 8px;
+      min-width: 22px;
+      text-align: center;
+    }
+
+    /* ---------- MAIN WRAPPER (Sidebar + Content) ---------- */
+    .main-wrapper {
+      display: flex;
+      gap: 36px;
+      margin: 32px 0 48px;
+      align-items: flex-start;
+    }
+
+    /* ---------- SIDEBAR ---------- */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 100px;
+      background: #fff;
+      padding: 24px 18px;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      border: 1px solid #ede9e2;
+    }
+    .sidebar h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      margin-bottom: 14px;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid #d4af37;
+      padding-bottom: 8px;
+    }
+    .sidebar ul li {
+      padding: 8px 0;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.15s;
+      border-left: 3px solid transparent;
+      padding-left: 10px;
+    }
+    .sidebar ul li:hover,
+    .sidebar ul li.active {
+      color: #1e1e2a;
+      border-left-color: #d4af37;
+      background: #faf6f0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* ---------- CONTENT AREA ---------- */
+    .content-area {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Featured Book */
+    .featured {
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+      border: 1px solid #ede9e2;
+      flex-wrap: wrap;
+    }
+    .featured-cover {
+      flex: 0 0 160px;
+      height: 220px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+    .featured-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .featured-info {
+      flex: 1;
+    }
+    .featured-info .badge {
+      background: #d4af37;
+      color: #1e1e2a;
+      font-weight: 700;
+      font-size: 0.7rem;
+      padding: 2px 14px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .featured-info h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      margin-bottom: 4px;
+    }
+    .featured-info .author {
+      color: #6b6760;
+      font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .featured-info .desc {
+      color: #3d3d3d;
+      margin-bottom: 16px;
+      max-width: 480px;
+    }
+    .featured-info .price {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #1e1e2a;
+    }
+    .btn-primary {
+      background: #1e1e2a;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+    .btn-primary:hover {
+      background: #d4af37;
+      color: #1e1e2a;
+    }
+
+    /* Toolbar */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .toolbar .results {
+      font-weight: 500;
+      color: #6b6760;
+      font-size: 0.95rem;
+    }
+    .toolbar select {
+      padding: 8px 18px;
+      border-radius: 40px;
+      border: 1px solid #dcd6ce;
+      background: #fff;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    /* Book Grid */
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px 20px;
+    }
+    .book-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px 14px 18px;
+      border: 1px solid #ede9e2;
+      transition: 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      cursor: pointer;
+    }
+    .book-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+    }
+    .book-cover {
+      width: 100%;
+      aspect-ratio: 2/3;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #eae7e1;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .book-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .book-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #d4af37;
+      color: #1e1e2a;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 12px;
+      border-radius: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .book-badge.new {
+      background: #2e7d32;
+      color: #fff;
+    }
+    .book-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 2px;
+      line-height: 1.3;
+    }
+    .book-author {
+      font-size: 0.85rem;
+      color: #6b6760;
+      margin-bottom: 6px;
+    }
+    .book-rating {
+      color: #d4af37;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .book-price {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin: 4px 0 10px;
+    }
+    .add-btn {
+      background: #1e1e2a;
+      color: #fff;
+      border: none;
+      padding: 8px 0;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+      margin-top: auto;
+      font-size: 0.9rem;
+    }
+    .add-btn:hover {
+      background: #d4af37;
+      color: #1e1e2a;
+    }
+    .add-btn.in-cart {
+      background: #2e7d32;
+    }
+    .add-btn.in-cart:hover {
+      background: #1b5e20;
+    }
+
+    /* ---------- BOOK DETAIL PAGE ---------- */
+    .detail-page {
+      display: none;
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      margin: 32px 0;
+      border: 1px solid #ede9e2;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    }
+    .detail-page.active {
+      display: block;
+    }
+    .detail-back {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: #6b6760;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .detail-back:hover {
+      color: #d4af37;
+    }
+    .detail-layout {
+      display: flex;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .detail-cover {
+      flex: 0 0 260px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .detail-cover img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .detail-info {
+      flex: 1;
+      min-width: 280px;
+    }
+    .detail-info h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      margin-bottom: 4px;
+    }
+    .detail-info .author {
+      font-size: 1.1rem;
+      color: #6b6760;
+      margin-bottom: 12px;
+    }
+    .detail-info .rating {
+      color: #d4af37;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+    .detail-info .price {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .detail-info .description {
+      color: #3d3d3d;
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+    .detail-info .detail-add-btn {
+      background: #1e1e2a;
+      color: #fff;
+      border: none;
+      padding: 12px 40px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .detail-info .detail-add-btn:hover {
+      background: #d4af37;
+      color: #1e1e2a;
+    }
+    .detail-info .detail-add-btn.in-cart {
+      background: #2e7d32;
+    }
+    .detail-info .detail-add-btn.in-cart:hover {
+      background: #1b5e20;
+    }
+
+    /* ---------- OTHER SECTIONS ---------- */
+    .info-section {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px 36px;
+      margin: 40px 0;
+      border: 1px solid #ede9e2;
+    }
+    .info-section h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+    .info-section p {
+      color: #4a4a4a;
+      max-width: 600px;
+    }
+    .info-grid {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .info-grid div {
+      flex: 1;
+      min-width: 180px;
+    }
+    .info-grid h4 {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .info-grid p {
+      color: #6b6760;
+    }
+
+    /* ---------- BLOG ---------- */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      margin-top: 24px;
+    }
+    .blog-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px 20px 24px;
+      border: 1px solid #ede9e2;
+      transition: 0.2s;
+    }
+    .blog-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+    .blog-card .blog-icon {
+      font-size: 2.4rem;
+      margin-bottom: 8px;
+    }
+    .blog-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 6px;
+    }
+    .blog-card .meta {
+      font-size: 0.8rem;
+      color: #6b6760;
+      margin-bottom: 10px;
+    }
+    .blog-card p {
+      color: #4a4a4a;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+    .blog-card .read-more {
+      color: #d4af37;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .blog-card .read-more:hover {
+      text-decoration: underline;
+    }
+
+    /* ---------- CART SIDEBAR ---------- */
+    .cart-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 200;
+      display: none;
+      justify-content: flex-end;
+    }
+    .cart-overlay.open {
+      display: flex;
+    }
+    .cart-drawer {
+      background: #fff;
+      width: 100%;
+      max-width: 440px;
+      padding: 28px 24px;
+      overflow-y: auto;
+      box-shadow: -8px 0 30px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
+    }
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #ede9e2;
+    }
+    .cart-close {
+      cursor: pointer;
+      font-size: 1.8rem;
+      line-height: 1;
+    }
+    .cart-items {
+      flex: 1;
+      margin: 20px 0;
+    }
+    .cart-item {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid #f0ede8;
+      align-items: center;
+    }
+    .cart-item .item-cover {
+      width: 50px;
+      height: 70px;
+      border-radius: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #eae7e1;
+    }
+    .cart-item .item-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cart-item .item-info {
+      flex: 1;
+    }
+    .cart-item .item-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .cart-item .item-qty {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .cart-item .item-qty button {
+      background: #eee;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.1s;
+    }
+    .cart-item .item-qty button:hover {
+      background: #d4af37;
+      color: #fff;
+    }
+    .cart-item .item-price {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .cart-footer {
+      border-top: 2px solid #ede9e2;
+      padding-top: 18px;
+    }
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .checkout-btn {
+      background: #d4af37;
+      border: none;
+      width: 100%;
+      padding: 14px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+      color: #1e1e2a;
+    }
+    .checkout-btn:hover {
+      background: #c3a031;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 1024px) {
+      .book-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 820px) {
+      .main-wrapper {
+        flex-direction: column;
+      }
+      .sidebar {
+        position: static;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px 40px;
+        padding: 18px 20px;
+      }
+      .sidebar h3 {
+        width: 100%;
+        margin-bottom: 4px;
+      }
+      .sidebar ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 16px;
+      }
+      .sidebar ul li {
+        border-left: none;
+        padding: 4px 10px;
+        border-radius: 30px;
+        background: #f0ede8;
+      }
+      .sidebar ul li.active {
+        background: #d4af37;
+        color: #1e1e2a;
+        border-left: none;
+      }
+      .featured {
+        flex-direction: column;
+        text-align: center;
+      }
+      .featured-info .desc {
+        max-width: 100%;
+      }
+      .detail-layout {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .detail-cover {
+        flex: 0 0 200px;
+        width: 200px;
+      }
+      .blog-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    @media (max-width: 600px) {
+      .book-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .nav-inner {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-links {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px 16px;
+      }
+      .nav-actions {
+        justify-content: center;
+      }
+      .blog-grid {
+        grid-template-columns: 1fr;
+      }
+      .detail-cover {
+        flex: 0 0 160px;
+        width: 160px;
+      }
+    }
+    @media (max-width: 420px) {
+      .book-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .mt-2 { margin-top: 8px; }
+    .text-muted { color: #6b6760; }
+
+    /* Utility to hide main content when detail is active */
+    .main-content-hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header>
+  <div class="container nav-inner">
+    <div class="logo">Book<span>Verse</span></div>
+    <ul class="nav-links">
+      <li><a data-target="home">Home</a></li>
+      <li><a data-target="books">Books</a></li>
+      <li><a data-target="blog">Blog</a></li>
+      <li><a data-target="about">About</a></li>
+      <li><a data-target="
+">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="cart-icon" id="cartIcon">
+        🛒
+        <span class="cart-count" id="cartCount">0</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ========== MAIN CONTENT WRAPPER (Books, etc.) ========== -->
+<div id="mainContent" class="container">
+  <div class="main-wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <h3>📚 Categories</h3>
+      <ul id="categoryList">
+        <li class="active" data-category="all">All Books</li>
+        <li data-category="fiction">Fiction</li>
+        <li data-category="nonfiction">Non‑Fiction</li>
+        <li data-category="academic">Academic</li>
+        <li data-category="children">Children</li>
+        <li data-category="sci-fi">Sci‑Fi</li>
+      </ul>
+    </aside>
+
+    <!-- CONTENT -->
+    <section class="content-area" id="books">
+      <!-- Featured Book -->
+      <div class="featured" id="featuredBook">
+        <!-- filled by JS -->
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <span class="results" id="resultCount">Showing 33 books</span>
+        <select id="sortSelect">
+          <option value="default">Sort by</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+          <option value="rating">Rating</option>
+        </select>
+      </div>
+
+      <!-- Book Grid -->
+      <div class="book-grid" id="bookGrid"></div>
+    </section>
+  </div>
+</div>
+
+<!-- ========== BOOK DETAIL PAGE ========== -->
+<div id="detailPage" class="container detail-page">
+  <span class="detail-back" id="detailBack">← Back to Books</span>
+  <div class="detail-layout">
+    <div class="detail-cover" id="detailCover">
+      <img src="" alt="Cover" />
+    </div>
+    <div class="detail-info">
+      <h1 id="detailTitle"></h1>
+      <div class="author" id="detailAuthor"></div>
+      <div class="rating" id="detailRating"></div>
+      <div class="price" id="detailPrice"></div>
+      <div class="description" id="detailDescription"></div>
+      <button class="detail-add-btn" id="detailAddBtn">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== BLOG ========== -->
+<div class="container" id="blog">
+  <section class="info-section">
+    <h2>📝 From the Blog</h2>
+    <p>Book reviews, author interviews, and literary insights from our team.</p>
+    <div class="blog-grid">
+      <div class="blog-card">
+        <div class="blog-icon">📖</div>
+        <h3>Top 10 Sci-Fi Books to Read in 2026</h3>
+        <div class="meta">By Elena R. · 3 min read</div>
+        <p>From Dune to Project Hail Mary, we've curated the most mind‑bending sci‑fi adventures that will keep you up all night.</p>
+        <span class="read-more">Read more →</span>
+      </div>
+      <div class="blog-card">
+        <div class="blog-icon">✍️</div>
+        <h3>An Evening with Alex Michaelides</h3>
+        <div class="meta">By James K. · 5 min read</div>
+        <p>We sat down with the bestselling author of "The Silent Patient" to discuss his creative process and upcoming thriller.</p>
+        <span class="read-more">Read more →</span>
+      </div>
+      <div class="blog-card">
+        <div class="blog-icon">☕</div>
+        <h3>How to Build a Daily Reading Habit</h3>
+        <div class="meta">By Sarah W. · 4 min read</div>
+        <p>Struggling to find time to read? Our simple 20‑minute routine will help you finish 30+ books a year without burnout.</p>
+        <span class="read-more">Read more →</span>
+      </div>
+      <div class="blog-card">
+        <div class="blog-icon">🏆</div>
+        <h3>BookVerse Awards 2025: Best Fiction</h3>
+        <div class="meta">By Team BookVerse · 6 min read</div>
+        <p>Celebrating the most compelling, beautifully written fiction of the year, as voted by our community of 10,000+ readers.</p>
+        <span class="read-more">Read more →</span>
+      </div>
+      <div class="blog-card">
+        <div class="blog-icon">🌍</div>
+        <h3>Translated Gems: Global Literature Picks</h3>
+        <div class="meta">By Priya M. · 4 min read</div>
+        <p>Discover breathtaking stories from around the world, brought to you in stunning English translations you won't forget.</p>
+        <span class="read-more">Read more →</span>
+      </div>
+      <div class="blog-card">
+        <div class="blog-icon">🧒</div>
+        <h3>Best Children's Books for Every Age</h3>
+        <div class="meta">By Emma L. · 3 min read</div>
+        <p>From picture books to young adult epics, find the perfect read to inspire the little ones in your life.</p>
+        <span class="read-more">Read more →</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== ABOUT & CONTACT ========== -->
+<div class="container">
+  <section id="about" class="info-section">
+    <h2>📖 About BookVerse</h2>
+    <p>We are a team of passionate readers who believe every book opens a new world. Since 2010, we’ve been connecting readers with their next great adventure.</p>
+    <div class="info-grid">
+      <div><h4>📍 Our Mission</h4><p>To make quality literature accessible to everyone, everywhere.</p></div>
+      <div><h4>📚 Curated Selection</h4><p>Every title is handpicked by our expert librarians and reviewers.</p></div>
+      <div><h4>❤️ Community</h4><p>Join our monthly reading challenges and author Q&A sessions.</p></div>
+    </div>
+  </section>
+
+  <section id="contact" class="info-section">
+    <h2>✉️ Contact Us</h2>
+    <p>We’d love to hear from you. Reach out for order help, recommendations, or just to say hello.</p>
+    <div class="info-grid">
+      <div><h4>📧 Email</h4><p>hello@bookverse.com</p></div>
+      <div><h4>📞 Phone</h4><p>+1 (555) 123‑4567</p></div>
+      <div><h4>🏛️ Address</h4><p>123 Literary Lane, NYC, NY 10001</p></div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== CART OVERLAY ========== -->
+<div class="cart-overlay" id="cartOverlay">
+  <div class="cart-drawer">
+    <div class="cart-header">
+      <span>🛒 Your Cart</span>
+      <span class="cart-close" id="cartClose">✕</span>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <p style="color:#999; text-align:center; margin-top:30px;">Your cart is empty.</p>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cartTotal">$0.00</span>
+      </div>
+<a href="https://wa.me/923346366670">
+      <button class="checkout-btn" id="checkoutBtn">📲 Checkout via WhatsApp</button>
+</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===================== DATA (33 BOOKS WITH DESCRIPTIONS) =====================
+  const books = [
+    { id: 1, title: 'The Silent Patient', author: 'Alex Michaelides', category: 'fiction', price: 14.99, rating: 4.7, isbn: '9781250301697', badge: 'bestseller', description: 'Alicia Berenson’s life is seemingly perfect until she shoots her husband and never speaks again. Theo Faber, a psychotherapist, becomes obsessed with uncovering her motive. A gripping psychological thriller that will keep you guessing until the final page.' },
+    { id: 2, title: 'Sapiens', author: 'Yuval Noah Harari', category: 'nonfiction', price: 19.99, rating: 4.8, isbn: '9780062316097', badge: null, description: 'From a renowned historian comes a groundbreaking narrative of humanity’s creation and evolution that explores the ways in which biology and history have defined us and enhanced our understanding of what it means to be human.' },
+    { id: 3, title: 'Atomic Habits', author: 'James Clear', category: 'nonfiction', price: 16.99, rating: 4.9, isbn: '9780735211292', badge: 'bestseller', description: 'A practical and proven framework for building good habits and breaking bad ones. James Clear draws on scientific research to demonstrate how tiny changes can lead to remarkable results.' },
+    { id: 4, title: 'Dune', author: 'Frank Herbert', category: 'sci-fi', price: 12.99, rating: 4.6, isbn: '9780441013593', badge: null, description: 'Set on the desert planet Arrakis, Dune is the epic story of Paul Atreides, a young man who must navigate political intrigue, ecological disaster, and his own destiny to lead a rebellion that will change the universe forever.' },
+    { id: 5, title: 'The Catcher in the Rye', author: 'J.D. Salinger', category: 'fiction', price: 9.99, rating: 4.3, isbn: '9780316769488', badge: null, description: 'The classic novel of teenage angst and rebellion. Holden Caulfield narrates his journey through New York City, grappling with alienation, identity, and the phoniness of the adult world.' },
+    { id: 6, title: 'Educated', author: 'Tara Westover', category: 'nonfiction', price: 15.99, rating: 4.6, isbn: '9780399590504', badge: 'new', description: 'Born to survivalists in the mountains of Idaho, Tara Westover was seventeen the first time she set foot in a classroom. Her memoir is a powerful account of her quest for knowledge and the cost of breaking free from her family.' },
+    { id: 7, title: 'The Hobbit', author: 'J.R.R. Tolkien', category: 'fiction', price: 11.99, rating: 4.8, isbn: '9780547928227', badge: null, description: 'Bilbo Baggins, a comfortable hobbit, is swept into an unexpected adventure to reclaim the lost Dwarf Kingdom of Erebor. A timeless tale of courage, friendship, and discovery.' },
+    { id: 8, title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', category: 'academic', price: 18.99, rating: 4.5, isbn: '9780374533557', badge: null, description: 'Nobel laureate Daniel Kahneman explores the two systems that drive the way we think: the fast, intuitive, emotional system and the slow, deliberate, logical system. A must-read for understanding how we make decisions.' },
+    { id: 9, title: 'The Very Hungry Caterpillar', author: 'Eric Carle', category: 'children', price: 8.99, rating: 4.9, isbn: '9780399226908', badge: 'bestseller', description: 'A beloved classic that follows a tiny caterpillar as it eats its way through a variety of foods before transforming into a beautiful butterfly. Perfect for early readers.' },
+    { id: 10, title: 'Project Hail Mary', author: 'Andy Weir', category: 'sci-fi', price: 16.99, rating: 4.9, isbn: '9780593135204', badge: 'new', description: 'Ryland Grace wakes up with amnesia on a spaceship with two dead crewmates. He must piece together his mission to save Earth from extinction, and he discovers he is not alone. A thrilling, science-filled adventure.' },
+    { id: 11, title: 'Becoming', author: 'Michelle Obama', category: 'nonfiction', price: 17.99, rating: 4.7, isbn: '9781524763138', badge: null, description: 'In her memoir, former First Lady Michelle Obama shares her personal journey from the South Side of Chicago to the White House, with insight, humor, and warmth.' },
+    { id: 12, title: 'The Alchemist', author: 'Paulo Coelho', category: 'fiction', price: 12.99, rating: 4.4, isbn: '9780062502174', badge: null, description: 'A spiritual novel about a young Andalusian shepherd who travels to the Egyptian desert in search of a treasure, discovering the true meaning of life and following his Personal Legend.' },
+    { id: 13, title: 'The Midnight Library', author: 'Matt Haig', category: 'fiction', price: 15.99, rating: 4.5, isbn: '9780525559474', badge: 'bestseller', description: 'Between life and death lies a library where every book offers a chance to try another life. Nora Seed discovers what might have been if she had made different choices, and finds that the best version of herself is the one she chooses to be.' },
+    { id: 14, title: 'The Thursday Murder Club', author: 'Richard Osman', category: 'fiction', price: 13.99, rating: 4.6, isbn: '9781984880963', badge: null, description: 'In a peaceful retirement village, four unlikely friends meet weekly to solve unsolved murders. When a real murder occurs, they find themselves in the middle of their own case. Witty, charming, and utterly addictive.' },
+    { id: 15, title: 'The Body Keeps the Score', author: 'Bessel van der Kolk', category: 'nonfiction', price: 14.99, rating: 4.7, isbn: '9780143127741', badge: null, description: 'Dr. Bessel van der Kolk explores how trauma reshapes both body and brain, and offers a path to healing through innovative treatments. A groundbreaking work in the field of trauma recovery.' },
+    { id: 16, title: 'Entangled Life', author: 'Merlin Sheldrake', category: 'nonfiction', price: 17.99, rating: 4.4, isbn: '9780525510314', badge: null, description: 'A fascinating exploration of the hidden world of fungi, revealing how these organisms shape our planet, our food, and our minds. A mind-expanding journey into the web of life.' },
+    { id: 17, title: 'Six of Crows', author: 'Leigh Bardugo', category: 'fiction', price: 10.99, rating: 4.8, isbn: '9781627792127', badge: 'bestseller', description: 'Kaz Brekker and his crew of outlaws are hired to pull off an impossible heist. Set in the gritty world of Ketterdam, this fantasy thriller is full of action, intrigue, and unforgettable characters.' },
+    { id: 18, title: 'The Priory of the Orange Tree', author: 'Samantha Shannon', category: 'fiction', price: 18.99, rating: 4.3, isbn: '9781635570298', badge: null, description: 'An epic fantasy of dragons, queens, and ancient magic. The House of Berethnet has ruled for a thousand years, but a growing darkness threatens to undo everything. A sweeping tale of loyalty and sacrifice.' },
+    { id: 19, title: 'How to Win Friends', author: 'Dale Carnegie', category: 'nonfiction', price: 9.99, rating: 4.6, isbn: '9780671027032', badge: null, description: 'The classic guide to building meaningful relationships, influencing people, and becoming a more likable person. Timeless principles for personal and professional success.' },
+    { id: 20, title: 'Goodnight Moon', author: 'Margaret Wise Brown', category: 'children', price: 7.99, rating: 4.9, isbn: '9780694003617', badge: 'bestseller', description: 'A gentle bedtime story that has lulled generations of children to sleep. The simple rhymes and soothing illustrations create a perfect end to the day.' },
+    { id: 21, title: 'A Brief History of Time', author: 'Stephen Hawking', category: 'academic', price: 16.99, rating: 4.5, isbn: '9780553380163', badge: null, description: 'Stephen Hawking’s landmark book on cosmology, exploring the nature of space, time, black holes, and the origin of the universe in a way that is accessible to non-scientists.' },
+    { id: 22, title: 'Neuromancer', author: 'William Gibson', category: 'sci-fi', price: 11.99, rating: 4.4, isbn: '9780441007462', badge: null, description: 'The seminal cyberpunk novel that defined the genre. Case, a washed-up hacker, is hired for one last job that takes him into the depths of cyberspace and the heart of artificial intelligence.' },
+    { id: 23, title: 'The Name of the Wind', author: 'Patrick Rothfuss', category: 'fiction', price: 14.99, rating: 4.8, isbn: '9780756404741', badge: 'bestseller', description: 'Kvothe recounts his journey from a gifted young boy to the most notorious wizard of his age. A beautifully written fantasy that weaves music, magic, and mystery into a masterful tale.' },
+    { id: 24, title: 'Klara and the Sun', author: 'Kazuo Ishiguro', category: 'sci-fi', price: 13.99, rating: 4.2, isbn: '9780593318171', badge: 'new', description: 'A gripping and heartbreaking novel about an artificial friend named Klara, who observes the world and the humans she serves, exploring what it means to love and be loved in an age of artificial intelligence.' },
+    { id: 25, title: 'The Shining', author: 'Stephen King', category: 'fiction', price: 13.99, rating: 4.6, isbn: '9780307743657', badge: null, description: 'Jack Torrance’s new job at the Overlook Hotel comes with a sinister past. As winter sets in, the hotel’s supernatural forces begin to drive Jack mad, threatening his wife and son. A classic horror masterpiece.' },
+    { id: 26, title: 'Gone Girl', author: 'Gillian Flynn', category: 'fiction', price: 12.99, rating: 4.5, isbn: '9780307588371', badge: null, description: 'On their fifth wedding anniversary, Amy Dunne disappears. Her husband Nick becomes the prime suspect. A twisted, psychological thriller that will leave you questioning everything.' },
+    { id: 27, title: 'The Martian', author: 'Andy Weir', category: 'sci-fi', price: 14.99, rating: 4.8, isbn: '9780553418026', badge: 'bestseller', description: 'Astronaut Mark Watney is stranded on Mars after a dust storm forces his crew to evacuate. With limited supplies, he must find a way to survive and signal Earth that he is still alive. An exhilarating survival story.' },
+    { id: 28, title: 'Dune Messiah', author: 'Frank Herbert', category: 'sci-fi', price: 11.99, rating: 4.3, isbn: '9780441172696', badge: null, description: 'The sequel to Dune continues Paul Atreides’ story as he grapples with the burden of prophecy and the consequences of his rise to power. A deeper exploration of politics, religion, and destiny.' },
+    { id: 29, title: 'The Psychology of Money', author: 'Morgan Housel', category: 'nonfiction', price: 15.99, rating: 4.7, isbn: '9780857197689', badge: null, description: 'A collection of short stories that reveal the surprising psychology behind financial decisions. Housel shows that wealth is more about behavior than knowledge, offering timeless lessons for everyone.' },
+    { id: 30, title: 'The Song of Achilles', author: 'Madeline Miller', category: 'fiction', price: 13.99, rating: 4.9, isbn: '9780062060624', badge: 'bestseller', description: 'A retelling of the Iliad from the perspective of Patroclus, the childhood friend and lover of Achilles. Miller’s lyrical prose brings the ancient myth to life, exploring love, honor, and fate.' },
+    { id: 31, title: 'Where the Crawdads Sing', author: 'Delia Owens', category: 'fiction', price: 14.99, rating: 4.7, isbn: '9780735219090', badge: null, description: 'Kya Clark, the "Marsh Girl," grows up isolated in the North Carolina swamps. When a popular man is found dead, she becomes the prime suspect. A haunting blend of coming-of-age and murder mystery.' },
+    { id: 32, title: 'The Handmaid\'s Tale', author: 'Margaret Atwood', category: 'sci-fi', price: 12.99, rating: 4.4, isbn: '9780385490818', badge: null, description: 'In a dystopian future, Offred is a Handmaid in the Republic of Gilead, a society that has subjugated women. Her narrative is a chilling exploration of power, resistance, and survival.' },
+    { id: 33, title: 'The Boy, the Mole, the Fox and the Horse', author: 'Charlie Mackesy', category: 'children', price: 16.99, rating: 4.9, isbn: '9780062976581', badge: 'new', description: 'A heartwarming illustrated book about an unlikely friendship between a boy, a mole, a fox, and a horse. Through simple conversations, they explore kindness, courage, and what really matters in life.' },
+  ];
+
+  // ===================== STATE =====================
+  let cart = [];
+  let currentCategory = 'all';
+  let currentSort = 'default';
+  let currentDetailId = null; // null = show main page
+
+  // DOM refs
+  const mainContent = document.getElementById('mainContent');
+  const detailPage = document.getElementById('detailPage');
+  const grid = document.getElementById('bookGrid');
+  const featured = document.getElementById('featuredBook');
+  const categoryList = document.getElementById('categoryList');
+  const sortSelect = document.getElementById('sortSelect');
+  const cartIcon = document.getElementById('cartIcon');
+  const cartOverlay = document.getElementById('cartOverlay');
+  const cartClose = document.getElementById('cartClose');
+  const cartItems = document.getElementById('cartItems');
+  const cartTotal = document.getElementById('cartTotal');
+  const cartCount = document.getElementById('cartCount');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const resultCount = document.getElementById('resultCount');
+  const detailBack = document.getElementById('detailBack');
+  const detailCover = document.getElementById('detailCover').querySelector('img');
+  const detailTitle = document.getElementById('detailTitle');
+  const detailAuthor = document.getElementById('detailAuthor');
+  const detailRating = document.getElementById('detailRating');
+  const detailPrice = document.getElementById('detailPrice');
+  const detailDescription = document.getElementById('detailDescription');
+  const detailAddBtn = document.getElementById('detailAddBtn');
+
+  // ===================== NAVIGATION =====================
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const target = link.dataset.target;
+      if (target === 'home') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      const section = document.getElementById(target);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        document.getElementById('books').scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  // ===================== RENDER HELPERS =====================
+  function getCoverUrl(isbn) {
+    return `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`;
+  }
+
+  function renderStars(rating) {
+    const full = Math.floor(rating);
+    const half = rating - full >= 0.5 ? 1 : 0;
+    let html = '';
+    for (let i = 0; i < full; i++) html += '★';
+    if (half) html += '½';
+    for (let i = 0; i < 5 - full - half; i++) html += '☆';
+    return html;
+  }
+
+  // ===================== ROUTING =====================
+  function showMainPage() {
+    mainContent.classList.remove('main-content-hidden');
+    detailPage.classList.remove('active');
+    currentDetailId = null;
+    window.location.hash = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showDetailPage(bookId) {
+    const book = books.find(b => b.id === bookId);
+    if (!book) return;
+    currentDetailId = bookId;
+    mainContent.classList.add('main-content-hidden');
+    detailPage.classList.add('active');
+
+    // Populate detail
+    detailCover.src = getCoverUrl(book.isbn);
+    detailCover.alt = book.title;
+    detailTitle.textContent = book.title;
+    detailAuthor.textContent = `by ${book.author}`;
+    detailRating.textContent = `${renderStars(book.rating)} ${book.rating}`;
+    detailPrice.textContent = `$${book.price.toFixed(2)}`;
+    detailDescription.textContent = book.description;
+
+    // Update add button
+    updateDetailButton();
+
+    // Update URL hash
+    window.location.hash = `book-${book.id}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ===================== DETAIL BUTTON =====================
+  function updateDetailButton() {
+    if (!currentDetailId) return;
+    const book = books.find(b => b.id === currentDetailId);
+    if (!book) return;
+    const inCart = cart.some(item => item.id === book.id);
+    detailAddBtn.textContent = inCart ? '✔ In Cart' : 'Add to Cart';
+    detailAddBtn.classList.toggle('in-cart', inCart);
+    detailAddBtn.dataset.id = book.id;
+  }
+
+  // ===================== RENDER FEATURED =====================
+  function renderFeatured(book) {
+    if (!book) {
+      featured.innerHTML = `<p>No featured book.</p>`;
+      return;
+    }
+    const inCart = cart.some(i => i.id === book.id);
+    featured.innerHTML = `
+      <div class="featured-cover">
+        <img src="${getCoverUrl(book.isbn)}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/160x220/cccccc/666666?text=No+Cover'" />
+      </div>
+      <div class="featured-info">
+        <span class="badge">🌟 Staff Pick</span>
+        <h2>${book.title}</h2>
+        <div class="author">by ${book.author}</div>
+        <div class="desc">${book.description.substring(0, 120)}…</div>
+        <div class="price">$${book.price.toFixed(2)}</div>
+        <button class="btn-primary" onclick="toggleCart(${book.id})">
+          ${inCart ? '✔ In Cart' : 'Add to Cart'}
+        </button>
+      </div>
+    `;
+  }
+
+  // ===================== RENDER BOOK GRID =====================
+  function renderBooks() {
+    let filtered = books.filter(book => {
+      const matchCategory = currentCategory === 'all' || book.category === currentCategory;
+      return matchCategory;
+    });
+
+    if (currentSort === 'price-asc') filtered.sort((a, b) => a.price - b.price);
+    else if (currentSort === 'price-desc') filtered.sort((a, b) => b.price - a.price);
+    else if (currentSort === 'rating') filtered.sort((a, b) => b.rating - a.rating);
+
+    resultCount.textContent = `Showing ${filtered.length} book${filtered.length !== 1 ? 's' : ''}`;
+
+    const featuredBook = filtered.length > 0 ? filtered[0] : books[0];
+    renderFeatured(featuredBook);
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:40px; color:#999;">No books in this category.</p>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(book => {
+      const inCart = cart.some(item => item.id === book.id);
+      let badgeHtml = '';
+      if (book.badge === 'bestseller') badgeHtml = `<span class="book-badge">⭐ Bestseller</span>`;
+      else if (book.badge === 'new') badgeHtml = `<span class="book-badge new">✨ New</span>`;
+
+      return `
+        <div class="book-card" data-id="${book.id}">
+          <div class="book-cover">
+            <img src="${getCoverUrl(book.isbn)}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/150x225/cccccc/666666?text=No+Cover'" />
+            ${badgeHtml}
+          </div>
+          <div class="book-title">${book.title}</div>
+          <div class="book-author">by ${book.author}</div>
+          <div class="book-rating">${renderStars(book.rating)} ${book.rating}</div>
+          <div class="book-price">$${book.price.toFixed(2)}</div>
+          <button class="add-btn ${inCart ? 'in-cart' : ''}" data-id="${book.id}">
+            ${inCart ? '✔ In Cart' : 'Add to Cart'}
+          </button>
+        </div>
+      `;
+    }).join('');
+
+    // Click on card to open detail
+    document.querySelectorAll('.book-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        // Prevent if clicked on button (button has its own handler)
+        if (e.target.classList.contains('add-btn')) return;
+        const id = parseInt(card.dataset.id);
+        showDetailPage(id);
+      });
+    });
+
+    // Add to cart buttons on cards
+    document.querySelectorAll('.add-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent card click
+        const id = parseInt(btn.dataset.id);
+        toggleCart(id);
+      });
+    });
+  }
+
+  // ===================== CART LOGIC =====================
+  function toggleCart(bookId) {
+    const idx = cart.findIndex(item => item.id === bookId);
+    if (idx > -1) {
+      cart.splice(idx, 1);
+    } else {
+      const book = books.find(b => b.id === bookId);
+      if (book) cart.push({ ...book, quantity: 1 });
+    }
+    updateCartUI();
+    renderBooks();
+    updateDetailButton(); // if detail is open
+  }
+
+  function updateCartUI() {
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartCount.textContent = totalItems;
+
+    if (cart.length === 0) {
+      cartItems.innerHTML = `<p style="color:#999; text-align:center; margin-top:30px;">Your cart is empty.</p>`;
+      cartTotal.textContent = '$0.00';
+      return;
+    }
+
+    let html = '';
+    let total = 0;
+    cart.forEach(item => {
+      const subtotal = item.price * item.quantity;
+      total += subtotal;
+      html += `
+        <div class="cart-item">
+          <div class="item-cover">
+            <img src="${getCoverUrl(item.isbn)}" alt="${item.title}" onerror="this.src='https://via.placeholder.com/50x70/cccccc/666666?text=No+Cover'" />
+          </div>
+          <div class="item-info">
+            <div class="item-title">${item.title}</div>
+            <div style="font-size:0.8rem; color:#6b6760;">${item.author}</div>
+            <div class="item-qty">
+              <button data-id="${item.id}" data-dir="-1">−</button>
+              <span>${item.quantity}</span>
+              <button data-id="${item.id}" data-dir="1">+</button>
+            </div>
+          </div>
+          <div class="item-price">$${subtotal.toFixed(2)}</div>
+        </div>
+      `;
+    });
+    cartItems.innerHTML = html;
+    cartTotal.textContent = `$${total.toFixed(2)}`;
+
+    cartItems.querySelectorAll('.item-qty button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.dataset.id);
+        const dir = parseInt(btn.dataset.dir);
+        const item = cart.find(it => it.id === id);
+        if (item) {
+          item.quantity = Math.max(1, item.quantity + dir);
+          updateCartUI();
+          renderBooks();
+          updateDetailButton();
+        }
+      });
+    });
+  }
+
+  // ===================== FILTERS =====================
+  categoryList.addEventListener('click', (e) => {
+    const li = e.target.closest('li');
+    if (!li) return;
+    categoryList.querySelectorAll('li').forEach(el => el.classList.remove('active'));
+    li.classList.add('active');
+    currentCategory = li.dataset.category;
+    renderBooks();
+  });
+
+  sortSelect.addEventListener('change', () => {
+    currentSort = sortSelect.value;
+    renderBooks();
+  });
+
+  // ===================== CART DRAWER =====================
+  function openCart() { cartOverlay.classList.add('open'); }
+  function closeCart() { cartOverlay.classList.remove('open'); }
+  cartIcon.addEventListener('click', openCart);
+  cartClose.addEventListener('click', closeCart);
+  cartOverlay.addEventListener('click', (e) => {
+    if (e.target === cartOverlay) closeCart();
+  });
+
+  // ===================== WHATSAPP CHECKOUT =====================
+  checkoutBtn.addEventListener('click', () => {
+    if (cart.length === 0) {
+      alert('Your cart is empty. Add some books first!');
+      return;
+    }
+
+    let message = '📚 *BookVerse Order Summary* 📚\n\n';
+    let total = 0;
+    cart.forEach(item => {
+      const subtotal = item.price * item.quantity;
+      total += subtotal;
+      message += `📖 ${item.quantity}x *${item.title}* — $${subtotal.toFixed(2)}\n`;
+    });
+    message += `\n *Total: $${total.toFixed(2)}*`;
+    message += '\n\n Thank you for shopping with BookVerse!';
+
+    const encoded = encodeURIComponent(message);
+    const waUrl = `https://wa.me/923123163055?text=${encoded}`;
+    window.open(waUrl, '_blank');
+  });
+
+  // ===================== DETAIL EVENT LISTENERS =====================
+  detailBack.addEventListener('click', showMainPage);
+
+  detailAddBtn.addEventListener('click', (e) => {
+    const id = parseInt(detailAddBtn.dataset.id);
+    if (!id) return;
+    toggleCart(id);
+  });
+
+  // ===================== HASH ROUTING =====================
+  window.addEventListener('hashchange', () => {
+    const hash = window.location.hash;
+    if (hash.startsWith('#book-')) {
+      const id = parseInt(hash.replace('#book-', ''));
+      if (!isNaN(id) && books.find(b => b.id === id)) {
+        showDetailPage(id);
+      }
+    } else {
+      showMainPage();
+    }
+  });
+
+  // ===================== INIT =====================
+  // Check hash on load
+  if (window.location.hash.startsWith('#book-')) {
+    const id = parseInt(window.location.hash.replace('#book-', ''));
+    if (!isNaN(id) && books.find(b => b.id === id)) {
+      showDetailPage(id);
+    } else {
+      showMainPage();
+    }
+  } else {
+    showMainPage();
+  }
+
+  renderBooks();
+  updateCartUI();
+</script>
+</body>
+</html>
